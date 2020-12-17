@@ -12,4 +12,4 @@
    * Elsif 1: inside loop 3, to search for the stop codon `TAG` and, if this is the first stop codon identified dowsntream the +1 frame after the di-codon, push the sequence in between to a new file.
    * Elsif 2: inside loop 3, to search for the stop codon `TGA` and, if this is the first stop codon identified downstream the +1 frame after the di-codon, push the sequence in between to a new file.
    
-It can be manipulated to identify certain sequences in the genome to generate their +1 frame downstream the ORF or genome.   
+Each loop can be manipulated to retrieve and quantify specific information like total number of codons, total number of stop codons, total number of di-codons, total number of genes, total number of nucleotides in a gene, and the numerical position of any sequence within the genome.    

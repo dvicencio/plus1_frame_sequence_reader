@@ -70,7 +70,7 @@ for($index=0; $index<@ORFarray; $index++){
     print "$scername \t  $genelen \n";
     
 my $len = 3;
-
+# defines 3 nucleotides length used in loop 2
     $gene = $ORFseq; # Specifies that the gene is equivalent to the ORF
 ```
 ## Loop 2
@@ -78,11 +78,16 @@ For each ORF, list their nucleotides in sets of three reading the sequence from 
 ```
 for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
 # this line defines the length of the array beggining from "ATG" to the end of the ORF in 3 nucleotide steps 
-my $codon = substr ($ORFseq, $ORFcod - 1, $len);
-    
-     $sixnt = substr ($ORFseq, $ORFcod - 1, $len +3);
-    
-     $position = ($ORFcod + (length $sixnt) - 1);
-     %pos = ($sixnt => $position);
 
+my $codon = substr ($ORFseq, $ORFcod - 1, $len);
+# extracts the codons from the ORF in order until the end
+
+     $sixnt = substr ($ORFseq, $ORFcod - 1, $len +3);
+     # extracts the codons plus the following 3 nucleotides (di-codon) for each codon from the beginning of the ORF to the end. 
+     
+     $position = ($ORFcod + (length $sixnt) - 1);
+     # extracts the range position for each di-codon in the ORF
+     
+     %pos = ($sixnt => $position);
+     # generates key-value pairs for each di-codon => position to retrieve them when needed
 ```

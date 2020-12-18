@@ -24,16 +24,14 @@ Each loop can be manipulated to retrieve and quantify specific information like:
 ```
 #!/usr/bin/perl -w
 open(SEQFILE, "file_with_genome.txt")||die "opening file $!";
-@ORFarray = <SEQFILE>;
+@ORFarray = <SEQFILE>; # first, we define our sequence file as an array
 close (SEQFILE);
-#this segment of code reads each line of the file, defining ORFs details, into an array
-
+# this segment of code reads each line of the file, defining ORFs details, into an array
 
 @NEWDATA=();
 open (RESULTS, ">>file_with_results.txt") ||die "cannot open results.txt: $!";
 @NEWDATA = <RESULTS>;
-
-
+# lines 31 to 33 create a new file to deliver results
 
 push (@NEWDATA, "frame-codon2.pl\n");
 push (@NEWDATA, "Gene name\t");
@@ -42,16 +40,11 @@ push (@NEWDATA, "Nucleotide position\t");
 push (@NEWDATA, "Potential frameshift bi-codon\t");
 push (@NEWDATA, "Hypothetical +1 sequence\t");
 push (@NEWDATA, "Stop codon position and seq downstream\n");
+#lines 36 to 42 create labels in the new file created
 ```
 
 ## Loop 1
 ```
-#!/usr/bin/perl -w
-open(SEQFILE, "file_with_genome.txt")||die "opening file $!";
-@ORFarray = <SEQFILE>; # first, we define our sequence file as an array
-close (SEQFILE);
-# this segment of code reads each line of the file, defining ORFs details, into an array
-
 for($index=0; $index<@ORFarray; $index++){
 # this line define the length of the array, or ORFs, in unit "nucleotide" elements             
     $gene = $ORFarray [$index];

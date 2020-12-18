@@ -19,3 +19,30 @@ Each loop can be manipulated to retrieve and quantify specific information like:
 * total number of genes 
 * total number of nucleotides in a gene 
 * the numerical position of any sequence within the genome    
+# Usage
+## Loop 1
+```
+for($index=0; $index<@ORFarray; $index++){
+                
+    $gene = $ORFarray [$index];
+    # this 'for' loop takes each line of sequence details in turn out of the array ready for processing
+    
+    $findtext = index ($gene, ">" , 0);
+    # finds out where the letter Y is, defining the beginning of the Scer yeast name
+    
+    $scername= substr ($gene,$findtext,8);
+    # extracts the Scer gene name 
+    
+    $ATGregion = index ($gene, "???", 0);
+    
+    $ORFseq = substr ($gene, $ATGregion+3);
+    
+    $genelen = length ($ORFseq) -2;
+    #measures length of gene sequence
+   
+    print "$scername \t  $genelen \n";
+    
+my $len = 3;
+
+    $gene = $ORFseq;
+```

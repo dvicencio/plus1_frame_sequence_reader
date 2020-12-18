@@ -69,5 +69,5 @@ for($index=0; $index<@ORFarray; $index++){
     
 my $len = 3;
 
-    $gene = $ORFseq;
+    $gene = $ORFseq; # Specifies that the gene is equivalent to the ORF
 ```

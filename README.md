@@ -2,7 +2,7 @@
 +1 frame sequence reader is a Perl program to read through a nucleotide sequence as a [ribosome](https://www.genome.gov/genetics-glossary/Ribosome) would do, in 3-nuclotide ([codon](https://www.genome.gov/genetics-glossary/Codon#:~:text=A%20codon%20is%20a%20trinucleotide,in%20groups%20of%20three%20bases.)) steps.
 # Description
 +1 frame sequence reader is a Perl program consisting of three [loops](https://www.perltutorial.org/perl-for-loop/) (subsequent loops inside the previous one), two '[if statements](https://www.perltutorial.org/perl-if/),' and two '[elsif statements](https://www.perltutorial.org/perl-if/)' to spot sequences in the +1-frame of a genome file.
-* Loop 1: places all gene sequences into an [array](https://www.perltutorial.org/perl-array/).
+* Loop 1: places all gene sequences into a separate [array](https://www.perltutorial.org/perl-array/).
 
 * Loop 2: inside loop 1, lists all nucleotides of the gene in groups of three also known as codons. This way the loop is also commanded to read the sequence in `codon + codon` steps just as a ribosome would move through an mRNA. 
    * If statement 1: inside loop2, to search for sequences with the `6` nucleotides (di-codon) of interest (this could be modified to more or less nucleotides depending of the length of sequence searched) and to retrieve the +1-frame sequence downstream of the di-codon.
@@ -22,13 +22,19 @@ Each loop can be manipulated to retrieve and quantify specific information like:
 # Usage
 ## Loop 1
 ```
+#!/usr/bin/perl -w
+open(SEQFILE, "file_with_genome.txt")||die "opening file $!";
+@ORFarray = <SEQFILE>; # first, we define our sequence file as an array
+close (SEQFILE);
+# this segment of code reads each line of the file, defining ORFs details, into an array
+
 for($index=0; $index<@ORFarray; $index++){
-                
+# this line define the length of the array, or ORFs, in unit "nucleotide" elements             
     $gene = $ORFarray [$index];
-    # this 'for' loop takes each line of sequence details in turn out of the array ready for processing
+    # this line defines each gene (ORF) as the sequence read until a line break is found
     
     $findtext = index ($gene, ">" , 0);
-    # finds out where the letter Y is, defining the beginning of the Scer yeast name
+    # finds out where the symbol ">" is, defining the beginning of the *S. cerevisiae* gene name
     
     $scername= substr ($gene,$findtext,8);
     # extracts the Scer gene name 

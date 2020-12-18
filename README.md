@@ -20,6 +20,30 @@ Each loop can be manipulated to retrieve and quantify specific information like:
 * total number of nucleotides in a gene 
 * the numerical position of any sequence within the genome    
 # Usage
+## Initiation
+```
+#!/usr/bin/perl -w
+open(SEQFILE, "file_with_genome.txt")||die "opening file $!";
+@ORFarray = <SEQFILE>;
+close (SEQFILE);
+#this segment of code reads each line of the file, defining ORFs details, into an array
+
+
+@NEWDATA=();
+open (RESULTS, ">>file_with_results.txt") ||die "cannot open results.txt: $!";
+@NEWDATA = <RESULTS>;
+
+
+
+push (@NEWDATA, "frame-codon2.pl\n");
+push (@NEWDATA, "Gene name\t");
+push (@NEWDATA, "Gene length\t");
+push (@NEWDATA, "Nucleotide position\t");
+push (@NEWDATA, "Potential frameshift bi-codon\t");
+push (@NEWDATA, "Hypothetical +1 sequence\t");
+push (@NEWDATA, "Stop codon position and seq downstream\n");
+```
+
 ## Loop 1
 ```
 #!/usr/bin/perl -w
@@ -34,17 +58,19 @@ for($index=0; $index<@ORFarray; $index++){
     # this line defines each gene (ORF) as the sequence read until a line break is found
     
     $findtext = index ($gene, ">" , 0);
-    # finds out where the symbol ">" is, defining the beginning of the *S. cerevisiae* gene name
+    # finds out where the symbol ">" is, defining the beginning of the S. cerevisiae gene name
     
     $scername= substr ($gene,$findtext,8);
-    # extracts the Scer gene name 
+    # extracts eight letters of the S. cerevisiae gene name
     
     $ATGregion = index ($gene, "???", 0);
+    # dentifies the beginning of the ORF by indicating the "???" characters situated before ATG start codons
     
     $ORFseq = substr ($gene, $ATGregion+3);
+    # extracts the ORF sequence from the start codon to the stop codon
     
     $genelen = length ($ORFseq) -2;
-    #measures length of gene sequence
+    # measures the number of nucleotides in the ORF
    
     print "$scername \t  $genelen \n";
     

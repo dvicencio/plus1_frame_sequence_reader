@@ -21,6 +21,7 @@ Each loop can be manipulated to retrieve and quantify specific information like:
 * the numerical position of any sequence within the genome    
 # Usage
 ## Initiation
+Selects the file with the genome sequence of interest (e.g. s. cerevisiae ORFs in this case) and defines it as an array
 ```
 #!/usr/bin/perl -w
 open(SEQFILE, "file_with_genome.txt")||die "opening file $!";
@@ -44,9 +45,10 @@ push (@NEWDATA, "Stop codon position and seq downstream\n");
 ```
 
 ## Loop 1
+For each ORF, list their letters (nucleotides) into an array
 ```
 for($index=0; $index<@ORFarray; $index++){
-# this line define the length of the array, or ORFs, in unit "nucleotide" elements             
+# this line defines the length of the array, or ORFs, in unit "nucleotide" elements             
     $gene = $ORFarray [$index];
     # this line defines each gene (ORF) as the sequence read until a line break is found
     

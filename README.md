@@ -27,7 +27,7 @@ Selects the file with the genome sequence of interest (e.g. s. cerevisiae ORFs i
 open(SEQFILE, "file_with_genome.txt")||die "opening file $!";
 @ORFarray = <SEQFILE>; # first, we define our sequence file as an array
 close (SEQFILE);
-# this segment of code reads each line of the file, defining ORFs details, into an array
+# this segment of code reads each line of the file, defining genes details, into an array
 
 @NEWDATA=();
 open (RESULTS, ">>file_with_results.txt") ||die "cannot open results.txt: $!";
@@ -48,7 +48,7 @@ push (@NEWDATA, "Stop codon position and seq downstream\n");
 For each gene information, list their letters (nucleotides) into an array
 ```
 for($index=0; $index<@ORFarray; $index++){
-# this line defines the length of the gene, or ORFs, in unit "nucleotide" elements             
+# this line defines the length of the array, or gene, in unit "nucleotide" elements             
     $gene = $ORFarray [$index];
     # this line defines each gene (ORF) as the sequence read until a line break is found
     
@@ -74,10 +74,10 @@ my $len = 3;
     $gene = $ORFseq; # Specifies that the gene is equivalent to the ORF
 ```
 ## Loop 2
-For each ORF, list their nucleotides in sets of three readind the sequence from the start codon to the end of the ORF
+For each ORF, list their nucleotides in sets of three reading the sequence from the start codon to the end of the ORF in codon steps
 ```
 for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
-# this line defines the length of the array, or ORFs, in unit "nucleotide" elements 
+# this line defines the length of the array beggining from "ATG" to the end of the ORF in 3 nucleotide steps 
 my $codon = substr ($ORFseq, $ORFcod - 1, $len);
     
      $sixnt = substr ($ORFseq, $ORFcod - 1, $len +3);

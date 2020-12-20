@@ -32,7 +32,7 @@ close (SEQFILE);
 @NEWDATA=();
 open (RESULTS, ">>file_with_results.txt") ||die "cannot open results.txt: $!";
 @NEWDATA = <RESULTS>;
-# lines 31 to 33 create a new file to deliver results
+# the 3 previous lines create a new file to deliver results
 
 push (@NEWDATA, "frame-codon2.pl\n");
 push (@NEWDATA, "Gene name\t");
@@ -41,7 +41,7 @@ push (@NEWDATA, "Nucleotide position\t");
 push (@NEWDATA, "Potential frameshift bi-codon\t");
 push (@NEWDATA, "Hypothetical +1 sequence\t");
 push (@NEWDATA, "Stop codon position and seq downstream\n");
-#lines 36 to 42 create labels in the new file created
+# the 8 lines create labels in the new file created
 ```
 
 ## Loop 1
@@ -91,3 +91,25 @@ my $codon = substr ($ORFseq, $ORFcod - 1, $len);
      %pos = ($sixnt => $position);
      # generates key-value pairs for each di-codon => position to retrieve them when needed
 ```
+### If Statement 1
+Looks for specific di-codon sequences and pushes the information into the new file
+```
+ if ($sixnt eq $fsitectt1) {
+ # As Loop 2 reads through each codon + codon in the sequence if a di-codons is equal to $fsitectt1 (which is CTTACG in this case) the following code is applied:
+ 
+   $newstart = index ($gene, "???", 0);
+   # finds out the beginning of the ORF to map out the positions of each di-codon
+    
+   $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
+   # finds the di-codon and its exact position in the ORF using the key-value previously defined in Loop 2 
+  
+        push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+        # the 5 previous lines retrieve all the information related to the di-codon of interest which includes: gene name, gene length, di-codon position within ORF, and the +1-frame sequence downstream
+        
+  $newseqlen = length($newseq);
+  # defines the new frame sequence length for future reference
+  ```

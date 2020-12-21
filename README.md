@@ -95,7 +95,7 @@ my $codon = substr ($ORFseq, $ORFcod - 1, $len);
 Looks for specific di-codon sequences and pushes all the related information into the new file
 ```
  if ($sixnt eq $fsitectt1) {
- # As Loop 2 reads through each codon + codon in the sequence if a di-codons is equal to $fsitectt1 (which is CTTACG in this case) the following code is applied:
+ # As Loop 2 reads through each codon + codon in the sequence if a di-codon is equal to $fsitectt1 (a string which is CTTACG in this case) the following code is applied:
  
    $newstart = index ($gene, "???", 0);
    # finds out the beginning of the ORF to map out the positions of each di-codon
@@ -133,3 +133,19 @@ for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
     %newpos = ($newcodon => $newposition);
     # generates key-value pairs for each codon => +1 frame position to retrieve them when needed
 ```
+### If statement 2
+if ($newcodon eq $stopsite1 ){
+Looks for the first immediate stop codon ( in case TAA is the first) after the di-codon +1 frame initiates and pushes the in between sequence into the new file
+     ```
+    $stopsite = index ($newcodon, $stopsite1);
+    # identifies the first stop codon in the +1 frame sequence
+    
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    # extracts the new sequence with the identified stop codon at the end
+    
+    $stop1 = $newposition;
+    # identifies position of the stop codon
+    
+    push (@a,"$stop1\t $stopseq \n");
+    # pushes the new +1 frame sequence with the first stop codon encountered downstream and its position into a new array
+    ```

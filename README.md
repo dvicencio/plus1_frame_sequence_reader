@@ -114,7 +114,7 @@ Looks for specific di-codon sequences and pushes all the related information int
   # defines the new frame sequence length for future reference
   ```
 ## Loop 3
-for each +1 sequence, list each codon until the end of the ORF
+for each +1 sequence, list the codons until the end of the ORF
 ```
 for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
 # this line, once again, defines the length of the array; however, it starts reading from the +1 frame of the sequence downstream the di-codon starting from the fourth nucleotide from left to right.  
@@ -131,5 +131,5 @@ for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
      #defines the position of each codon in the +1 frame sequence
      
     %newpos = ($newcodon => $newposition);
-    
+    # generates key-value pairs for each codon => +1 frame position to retrieve them when needed
 ```

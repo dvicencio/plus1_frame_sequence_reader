@@ -155,7 +155,7 @@ if ($newcodon eq $stopsite1 ){
 
 Looks for the first immediate stop codon ( in case TAG is the first) after the di-codon +1 frame initiates and pushes the in between sequence into the new file
     
-    ```
+```
 elsif ($newcodon eq $stopsite2) {
      
       
@@ -166,5 +166,5 @@ elsif ($newcodon eq $stopsite2) {
     
     
     push (@a, "$stop1\t $stopseq \n");
-    ```
+```
 

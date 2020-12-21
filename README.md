@@ -152,9 +152,9 @@ if ($newcodon eq $stopsite1 ){
   ```
  ### Elsif statement 1
  
- ```
+
 Looks for the first immediate stop codon ( in case TAG is the first) after the di-codon +1 frame initiates and pushes the in between sequence into the new file
-   
+    ```
     $stopsite = index ($newcodon, $stopsite2);
     # identifies the first stop codon in the +1 frame sequence
   

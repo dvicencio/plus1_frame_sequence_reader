@@ -160,11 +160,15 @@ elsif ($newcodon eq $stopsite2) {
      
       
     $stopsite = index ($newcodon, $stopsite2);
+    # identifies the first stop codon in the +1 frame sequence
      
     $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
-    $stop1 = $newposition;
+    # extracts the new sequence with the identified stop codon at the end
     
+    $stop1 = $newposition;
+    # identifies position of the stop codon in the +1 frame sequence
     
     push (@a, "$stop1\t $stopseq \n");
+    # pushes the new +1 frame sequence with the first stop codon encountered downstream and its position into a new array
 ```
 

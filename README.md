@@ -137,7 +137,8 @@ for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
 Looks for the first immediate stop codon ( in case TAA is the first) after the di-codon +1 frame initiates and pushes the in between sequence into the new file
  ```
 if ($newcodon eq $stopsite1 ){
-    
+# As Loop 3 reads through each codon + codon in the + 1 frame sequence if a di-codon is equal to $stopsite1 (TAA) the following code is applied: 
+
     $stopsite = index ($newcodon, $stopsite1);
     # identifies the first stop codon in the +1 frame sequence
     
@@ -149,14 +150,16 @@ if ($newcodon eq $stopsite1 ){
     
     push (@a,"$stop1\t $stopseq \n");
     # pushes the new +1 frame sequence with the first stop codon encountered downstream and its position into a new array
+    
+    } # end of if statement 2
   ```
 ### Elsif statement 1
 Looks for the first immediate stop codon ( in case TAG is the first) after the di-codon +1 frame initiates and pushes the in between sequence into the new file
     
 ```
 elsif ($newcodon eq $stopsite2) {
-     
-      
+# As Loop 3 reads through each codon + codon in the + 1 frame sequence if a di-codon is equal to $stopsite1 (TAG) the following code is applied:
+    
     $stopsite = index ($newcodon, $stopsite2);
     # identifies the first stop codon in the +1 frame sequence
      
@@ -168,35 +171,35 @@ elsif ($newcodon eq $stopsite2) {
     
     push (@a, "$stop1\t $stopseq \n");
     # pushes the new +1 frame sequence with the first stop codon encountered downstream and its position into a new array
+    
+    } # end of elsif statement 1
 ```
 ### Elsif statement 2
 Looks for the first immediate stop codon ( in case TGA is the first) after the di-codon +1 frame initiates and pushes the in between sequence into the new file
 ```
 elsif ($newcodon eq $stopsite3) {
+# As Loop 3 reads through each codon + codon in the + 1 frame sequence if a di-codon is equal to $stopsite1 (TAG) the following code is applied:   
       
-      
-      
-      $stopsite = index ($newcodon, $stopsite3);
+    $stopsite = index ($newcodon, $stopsite3);
+    # identifies the first stop codon in the +1 frame sequence
      
     $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
-     $stop1 = $newposition;
-     
-   push (@a,"$stop1\t $stopseq \n");
-     
-     
-     }
- 
- 
- 
+    # extracts the new sequence with the identified stop codon at the end
     
- }
-
+    $stop1 = $newposition;
+    # identifies position of the stop codon in the +1 frame sequence
+    
+   push (@a,"$stop1\t $stopseq \n");
+   # pushes the new +1 frame sequence with the first stop codon encountered downstream and its position into a new array  
+     
+     } # end of elsif statement 2
+     
+ } # end of loop 3
 
     push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
-   
-  
-    
-    }
+    # Once the code has read through all the +1 sequence, it pushes the first sequence (the +1 frame sequnece with the first stop codon identified) in the @a array into the new file (@NEWDATA;results)
      
-   shift @a;
+    } # end of if statement 1
+     
+   shift @a; # after finish reading through the di-codon indicated in statement 1, the code deletes the @a array to avoid overstacking of sequences and allow the next +1 sequence with the first stop codon to take its place
  ```

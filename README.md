@@ -150,9 +150,7 @@ if ($newcodon eq $stopsite1 ){
     push (@a,"$stop1\t $stopseq \n");
     # pushes the new +1 frame sequence with the first stop codon encountered downstream and its position into a new array
   ```
- ### Elsif statement 1
- 
-
+### Elsif statement 1
 Looks for the first immediate stop codon ( in case TAG is the first) after the di-codon +1 frame initiates and pushes the in between sequence into the new file
     
 ```
@@ -171,4 +169,34 @@ elsif ($newcodon eq $stopsite2) {
     push (@a, "$stop1\t $stopseq \n");
     # pushes the new +1 frame sequence with the first stop codon encountered downstream and its position into a new array
 ```
+### Elsif statement 2
+Looks for the first immediate stop codon ( in case TGA is the first) after the di-codon +1 frame initiates and pushes the in between sequence into the new file
+```
+elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
+ }
 
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
+ ```

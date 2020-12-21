@@ -86,7 +86,7 @@ my $codon = substr ($ORFseq, $ORFcod - 1, $len);
      # extracts the codons plus the following 3 nucleotides (di-codon) for each codon from the beginning of the ORF to the end. 
      
      $position = ($ORFcod + (length $sixnt) - 1);
-     # extracts the range position for each di-codon in the ORF
+     # extracts the range position for each di-codon in the ORF (e.g. position 206)
      
      %pos = ($sixnt => $position);
      # generates key-value pairs for each di-codon => position to retrieve them when needed
@@ -101,7 +101,7 @@ Looks for specific di-codon sequences and pushes all the related information int
    # finds out the beginning of the ORF to map out the positions of each di-codon
     
    $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
-   # finds the di-codon and its exact position in the ORF using the key-value previously defined in Loop 2 
+   # finds the di-codon and its exact position in the ORF using the key-value previously defined in Loop 2 and retrieves the +1 frame downstream sequence by skipping one nucleotide. For instance, when the program finds the di-codon CTTACG, it will retrieve the new sequence strating from CGX.
   
         push (@NEWDATA, "$scername\t");
         push (@NEWDATA, "$genelen\t");
@@ -117,14 +117,19 @@ Looks for specific di-codon sequences and pushes all the related information int
 for each +1 sequence, list each codon until the end of the ORF
 ```
 for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
-  
+# this line, once again, defines the length of the array; however, it starts reading from the +1 frame of the sequence downstream the di-codon starting from the fourth nucleotide from left to right.  
+
     $stopsite1 = "TAA";
     $stopsite2 = "TAG";
     $stopsite3 = "TGA";
+    # the 3 previous lines define the stop codons as a string
     
      $newcodon = substr($newseq, $stop, $len);
-    
+     # extracts the codons from the +1 frame sequences in order
+     
      $newposition = ($stop + (length $newcodon));
+     #defines the position of each codon in the +1 frame sequence
      
     %newpos = ($newcodon => $newposition);
+    
 ```

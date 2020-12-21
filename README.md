@@ -134,9 +134,10 @@ for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
     # generates key-value pairs for each codon => +1 frame position to retrieve them when needed
 ```
 ### If statement 2
-if ($newcodon eq $stopsite1 ){
 Looks for the first immediate stop codon ( in case TAA is the first) after the di-codon +1 frame initiates and pushes the in between sequence into the new file
-     ```
+ ```
+if ($newcodon eq $stopsite1 ){
+    
     $stopsite = index ($newcodon, $stopsite1);
     # identifies the first stop codon in the +1 frame sequence
     

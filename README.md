@@ -7,7 +7,7 @@
 * Loop 2: inside loop 1, lists all nucleotides of the gene in groups of three also known as codons. This way the loop is also commanded to read the sequence in `codon + codon` steps just as a ribosome would move through an mRNA. 
    * If statement 1: inside loop2, to search for sequences with the `6` nucleotides (di-codon) of interest (this could be modified to more or less nucleotides depending of the length of sequence searched) and to retrieve the +1-frame sequence downstream of the di-codon.
    
-* Loop 3: inside loop 2, keeps reading through the gene squence, although in the +1-frame now, listing the nucleotides in codon groups once again. 
+* Loop 3: inside loop 2 and "if statement 1", keeps reading through the gene squence, although in the +1-frame now, listing the nucleotides in codon groups once again. 
    * If satement 2: inside Loop 3, to search for the stop codon `TAA` and , if this is the first stop codon identified downstream the +1 frame after the di-codon, push the sequence in between to a new file. 
    * Elsif 1: inside loop 3, to search for the stop codon `TAG` and, if this is the first stop codon identified dowsntream the +1 frame after the di-codon, push the sequence in between to a new file.
    * Elsif 2: inside loop 3, to search for the stop codon `TGA` and, if this is the first stop codon identified downstream the +1 frame after the di-codon, push the sequence in between to a new file.
@@ -92,7 +92,7 @@ my $codon = substr ($ORFseq, $ORFcod - 1, $len);
      # generates key-value pairs for each di-codon => position to retrieve them when needed
 ```
 ### If Statement 1
-Looks for specific di-codon sequences and pushes the information into the new file
+Looks for specific di-codon sequences and pushes all the related information into the new file
 ```
  if ($sixnt eq $fsitectt1) {
  # As Loop 2 reads through each codon + codon in the sequence if a di-codons is equal to $fsitectt1 (which is CTTACG in this case) the following code is applied:

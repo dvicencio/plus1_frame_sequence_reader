@@ -113,3 +113,18 @@ Looks for specific di-codon sequences and pushes the information into the new fi
   $newseqlen = length($newseq);
   # defines the new frame sequence length for future reference
   ```
+## Loop 3
+for each +1 sequence, list each codon until the end of the ORF
+```
+for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
+  
+    $stopsite1 = "TAA";
+    $stopsite2 = "TAG";
+    $stopsite3 = "TGA";
+    
+     $newcodon = substr($newseq, $stop, $len);
+    
+     $newposition = ($stop + (length $newcodon));
+     
+    %newpos = ($newcodon => $newposition);
+```

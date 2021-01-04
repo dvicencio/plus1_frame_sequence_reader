@@ -60,7 +60,7 @@ for($index=0; $index<@ORFarray; $index++){
     # extracts eight letters of the S. cerevisiae gene name
     
     $ATGregion = index ($gene, "???", 0);
-    # identifies the beginning of the ORF by indicating the "???" characters situated before ATG start codons
+    # identifies the beginning of the ORF by indicating the "???" characters situated before the "ATG" start codons
     
     $ORFseq = substr ($gene, $ATGregion+3);
     # extracts the ORF sequence from the start codon to the stop codon

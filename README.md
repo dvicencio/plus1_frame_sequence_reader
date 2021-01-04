@@ -205,4 +205,14 @@ elsif ($newcodon eq $stopsite3) {
    shift @a; # after finish reading through the di-codon indicated in statement 1, the code deletes the @a array to avoid overstacking of sequences and allow the next +1 sequence with the first stop codon to take its place
  ```
  ## Big Picture
-The code starts reading through a gene with loops cycling through the sequence looking for specific di-codons.\ When a di-codon is found, subsequent loops take place to retrieve more information.\ Further details are obtained and indicated by the code like the +1 sequences and the immediate stop codons.\ When the code has ran through the first gene and the first di-codon, if there is another di-codon of interst in the gene the code applies the same loops and if statements to retrieve its information.\ On the other hand, if there are no more di-codons of interest in the gene, the program jumps to the next ORF.\  This method is applied to each gene in the Saccharomyces cerevisiae's genome file until the last gene in the file has been read by the program.\ 
+The code starts reading through a gene with loops cycling through the sequence looking for specific di-codons. 
+
+When a di-codon is found, subsequent loops take place to retrieve more information.
+
+Further details are obtained and indicated by the code like the +1 sequences and the immediate stop codons.
+
+When the code has ran through the first gene and the first di-codon, if there is another di-codon of interst in the gene the code applies the same loops and if statements to retrieve its information.
+
+On the other hand, if there are no more di-codons of interest in the gene, the program jumps to the next ORF.
+
+This method is applied to each gene in the Saccharomyces cerevisiae's genome file until the last gene in the file has been read by the program.

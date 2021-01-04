@@ -218,3 +218,4 @@ On the other hand, if there are no more di-codons of interest in the gene, the p
 This method is applied to each gene in the Saccharomyces cerevisiae's genome file until the last gene in the file has been read by the program.
 
 # Genome File Specifications and Edition
+Genome files are usually represented in a [FASTA format](https://en.wikipedia.org/wiki/FASTA_format). However, slight changes to the file have to be done in order to run the code as intended. Such changes are:

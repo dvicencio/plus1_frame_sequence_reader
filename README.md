@@ -87,7 +87,7 @@ my $codon = substr ($ORFseq, $ORFcod - 1, $len);
      # extracts the codons plus the following 3 nucleotides (di-codon) for each codon from the beginning of the ORF to the end. 
      
      $position = ($ORFcod + (length $sixnt) - 1);
-     # extracts the range position for each di-codon in the ORF (e.g. position 206)
+     # extracts the position for each di-codon in the ORF (e.g. position 206)
      
      %pos = ($sixnt => $position);
      # generates key-value pairs for each di-codon => position to retrieve them when needed

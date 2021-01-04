@@ -41,7 +41,7 @@ push (@NEWDATA, "Nucleotide position\t");
 push (@NEWDATA, "Potential frameshift bi-codon\t");
 push (@NEWDATA, "Hypothetical +1 sequence\t");
 push (@NEWDATA, "Stop codon position and seq downstream\n");
-# the 8 lines create labels in the new file created
+# the 8 previous lines create labels in the new file created
 ```
 
 ## Loop 1

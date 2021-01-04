@@ -218,4 +218,8 @@ On the other hand, if there are no more di-codons of interest in the gene, the p
 This method is applied to each gene in the Saccharomyces cerevisiae's genome file until the last gene in the file has been read by the program.
 
 # Genome File Specifications and Edition
-Genome files are usually represented in a [FASTA format](https://en.wikipedia.org/wiki/FASTA_format). However, slight changes to the file have to be done in order to run the code as intended. Such changes are:
+Genome files are usually represented in [FASTA format](https://en.wikipedia.org/wiki/FASTA_format). However, slight changes to the file have to be done in order to run the code as intended. Such changes are (the following changes could be done using a text editor or the command line):
+* Remove all line breaks in the file
+* Add the characters "???" before every start codon
+* Add a line break before every ">" symbol to separate each gene
+note: some symbols are found in between the gene information which where edited indicidually, approx 7

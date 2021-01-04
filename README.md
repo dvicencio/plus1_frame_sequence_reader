@@ -96,13 +96,13 @@ my $codon = substr ($ORFseq, $ORFcod - 1, $len);
 Looks for specific di-codon sequences and pushes all the related information into the new file
 ```
  if ($sixnt eq $fsitectt1) {
- # As Loop 2 reads through each codon + codon in the sequence if a di-codon is equal to $fsitectt1 (a string which is CTTACG in this case) the following code is applied:
+ # As Loop 2 reads through each codon + codon in the sequence, if a di-codon is equal to $fsitectt1 (a string which is CTTACG in this case) the following code is applied:
  
    $newstart = index ($gene, "???", 0);
    # finds out the beginning of the ORF to map out the positions of each di-codon
     
    $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
-   # finds the di-codon and its exact position in the ORF using the key-value previously defined in Loop 2 and retrieves the +1 frame downstream sequence by skipping one nucleotide. For instance, when the program finds the di-codon CTTACG, it will retrieve the new sequence strating from CGX.
+   # finds the di-codon and its exact position in the ORF using the key-value previously defined in Loop 2 and retrieves the +1 frame downstream sequence by skipping one nucleotide. For instance, when the program finds the di-codon CTTACG, it will retrieve the new sequence starting from CGX.
   
         push (@NEWDATA, "$scername\t");
         push (@NEWDATA, "$genelen\t");
@@ -123,19 +123,19 @@ for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
     $stopsite1 = "TAA";
     $stopsite2 = "TAG";
     $stopsite3 = "TGA";
-    # the 3 previous lines define the stop codons as a string
+    # the 3 previous lines define the stop codons as strings
     
      $newcodon = substr($newseq, $stop, $len);
      # extracts the codons from the +1 frame sequences in order
      
      $newposition = ($stop + (length $newcodon));
-     #defines the position of each codon in the +1 frame sequence
+     # defines the position of each codon in the +1 frame sequence
      
     %newpos = ($newcodon => $newposition);
     # generates key-value pairs for each codon => +1 frame position to retrieve them when needed
 ```
 ### If statement 2
-Looks for the first immediate stop codon ( in case TAA is the first) after the di-codon +1 frame initiates and pushes the in between sequence into the new file
+Looks for the first immediate stop codon ( in case that TAA is the first) after the di-codon +1 frame initiates and pushes the in between sequence into the new file
  ```
 if ($newcodon eq $stopsite1 ){
 # As Loop 3 reads through each codon + codon in the + 1 frame sequence if a di-codon is equal to $stopsite1 (TAA) the following code is applied: 
@@ -155,7 +155,7 @@ if ($newcodon eq $stopsite1 ){
     } # end of if statement 2
   ```
 ### Elsif statement 1
-Looks for the first immediate stop codon ( in case TAG is the first) after the di-codon +1 frame initiates and pushes the in between sequence into the new file
+Looks for the first immediate stop codon ( in case that TAG is the first) after the di-codon +1 frame initiates and pushes the in between sequence into the new file
     
 ```
 elsif ($newcodon eq $stopsite2) {

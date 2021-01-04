@@ -217,4 +217,4 @@ On the other hand, if there are no more di-codons of interest in the gene, the p
 
 This method is applied to each gene in the Saccharomyces cerevisiae's genome file until the last gene in the file has been read by the program.
 
-# File Specifications
+# Genome File Specifications and Edition

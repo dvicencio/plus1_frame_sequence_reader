@@ -63,7 +63,7 @@ for($index=0; $index<@ORFarray; $index++){
     # identifies the beginning of the ORF by indicating the "???" characters situated before the "ATG" start codons
     
     $ORFseq = substr ($gene, $ATGregion+3);
-    # extracts the ORF sequence from the start codon to the stop codon
+    # extracts the ORF sequence from the start codon to the end
     
     $genelen = length ($ORFseq) -2;
     # measures the number of nucleotides in the ORF

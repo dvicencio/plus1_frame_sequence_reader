@@ -206,6 +206,7 @@ elsif ($newcodon eq $stopsite3) {
  ```
  ## Big Picture
 The code starts reading through a gene with loops cycling through the sequence looking for specific di-codons. 
+![](tty.gif)
 
 When a di-codon is found, subsequent loops take place to retrieve more information.
 

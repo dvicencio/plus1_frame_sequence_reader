@@ -74,6 +74,8 @@ my $len = 3;
 # defines 3 nucleotides length used in loop 2
     $gene = $ORFseq; # Specifies that the gene is equivalent to the ORF
 ```
+![](loop1.gif)
+
 ## Loop 2
 For each ORF, list their nucleotides in sets of three reading the sequence from the start codon to the end of the ORF in codon steps
 ```

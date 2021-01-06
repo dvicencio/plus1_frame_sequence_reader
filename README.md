@@ -45,7 +45,7 @@ push (@NEWDATA, "Stop codon position and seq downstream\n");
 ```
 
 ## Loop 1
-For each gene information, list their letters (nucleotides) into an array
+For each gene sequence information, list their letters (nucleotides) into an array
 ```
 for($index=0; $index<@ORFarray; $index++){
 # this line defines the length of the array, or gene, in unit "nucleotide" elements 

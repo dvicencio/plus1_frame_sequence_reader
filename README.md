@@ -74,7 +74,7 @@ my $len = 3;
 # defines 3 nucleotides length used in loop 2
     $gene = $ORFseq; # Specifies that the gene is equivalent to the ORF
 ```
-Example of the information extracted by Loop 1 from the genome file: gene name and length
+Example of the information extracted by Loop 1 from the genome file: gene name and length (a shorter genome file was used to exemplify the execution of the code)
 ![](loop1.gif)
 ## Loop 2
 For each ORF, list their nucleotides in sets of three reading the sequence from the start codon to the end of the ORF in codon steps
@@ -94,6 +94,8 @@ my $codon = substr ($ORFseq, $ORFcod - 1, $len);
      %pos = ($sixnt => $position);
      # generates key-value pairs for each di-codon => position to retrieve them when needed
 ```
+Example of the information extracted by Loop 2 from the genome file: codons and di-codons with total number
+![](loop2.gif)
 ### If Statement 1
 Looks for specific di-codon sequences and pushes all the related information into the new file
 ```

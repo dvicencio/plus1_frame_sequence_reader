@@ -98,7 +98,7 @@ my $codon = substr ($ORFseq, $ORFcod - 1, $len);
 Example of the information extracted by Loop 2 from the genome file: codons and di-codons with total number
 ![](loop2.gif)
 ### If Statement 1
-Looks for specific di-codon sequences and pushes all the related information into the new file
+Looks for specific di-codon sequences of interest and pushes all the downstream +1 frame sequences into the new file
 ```
  if ($sixnt eq $fsitectt1) {
  # As Loop 2 reads through each codon + codon in the sequence, if a di-codon is equal to $fsitectt1 (a string which is CTTACG in this case) the following code is applied:

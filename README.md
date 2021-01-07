@@ -119,6 +119,8 @@ Looks for specific di-codon sequences of interest and pushes all the downstream 
   $newseqlen = length($newseq);
   # defines the new frame sequence length for future reference
   ```
+  Example of the information extracted by the If statement 1 from the genome file: Specific di-codons of interest and their downstream +1 sequence
+  ![](ifstate1.gif)
 ## Loop 3
 for each +1 sequence, list the codons until the end of the ORF
 ```

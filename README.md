@@ -142,6 +142,9 @@ for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
     %newpos = ($newcodon => $newposition);
     # generates key-value pairs for each codon => +1 frame position to retrieve them when needed
 ```
+Example of the information extracted by Loop 3 from the genome file: codons in the downstream +1 frame
+
+![](loop3.gif)
 ### If statement 2
 Looks for the first immediate stop codon ( in case that TAA is the first) after the di-codon +1 frame initiates and pushes the in between sequence into the new file
  ```

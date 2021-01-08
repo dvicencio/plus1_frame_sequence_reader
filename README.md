@@ -21,7 +21,7 @@ Each loop can be manipulated to retrieve and quantify specific information like:
 * the numerical position of any sequence within the genome    
 # Usage
 ## Initiation
-Selects the file with the genome sequence of interest (e.g. s. cerevisiae ORFs in this case) and defines it as an array containing genes as elements
+Selects the file with the genome sequence of interest (e.g. *S. cerevisiae* ORFs in this case) and defines it as an array containing genes as elements
 ```
 #!/usr/bin/perl -w
 open(SEQFILE, "file_with_genome.txt")||die "opening file $!";

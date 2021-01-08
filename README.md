@@ -123,7 +123,7 @@ Looks for specific di-codon sequences of interest and pushes all the downstream 
   
   ![](ifstate.gif)
 ## Loop 3
-for each +1 sequence, list the codons until the end of the ORF
+For each +1 sequence, list the codons until the end of the ORF
 ```
 for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
 # this line, once again, defines the length of the array; however, it starts reading from the +1 frame of the sequence downstream the di-codon starting from the fourth nucleotide from left to right.  

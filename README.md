@@ -146,7 +146,7 @@ Example of the information extracted by Loop 3 from the genome file: codons in t
 
 ![](loop3.gif)
 ### If statement 2
-Looks for the first immediate stop codon ( in case that TAA is the first) after the di-codon +1 frame initiates and pushes the in between sequence into the new file
+Looks for the first immediate stop codon ( in case that TAA is the first) after the di-codon +1 frame initiates and pushes the "in between sequence" into the new file
  ```
 if ($newcodon eq $stopsite1 ){
 # As Loop 3 reads through each codon + codon in the + 1 frame sequence if a di-codon is equal to $stopsite1 (TAA) the following code is applied: 

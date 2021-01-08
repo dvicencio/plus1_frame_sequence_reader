@@ -49,7 +49,7 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
     my $position = ($ORFcod + (length $sixnt) - 1);
     
-    push (@NEWDATA, "$codon");
+    push (@NEWDATA, "$codon\n");
    
    
 

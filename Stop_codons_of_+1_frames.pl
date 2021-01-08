@@ -52,16 +52,16 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
    $codon = substr ($ORFseq, $ORFcod - 1, $len);
     
     if ($codon eq $stopsite1 ){   
-        push (@NEWDATA,"$codon");
-        print "$codon\n";
+        push (@NEWDATA,"$codon\t");
+       
      }
      elsif ($codon eq $stopsite2 ){   
-        push (@NEWDATA,"$codon");
-        print "$codon\n";
+        push (@NEWDATA,"$codon\t");
+        
      }
      elsif ($codon eq $stopsite3 ){   
-        push (@NEWDATA,"$codon");
-        print "$codon\n";
+        push (@NEWDATA,"$codon\t");
+       
      }
      
        }

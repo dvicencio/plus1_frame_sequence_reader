@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-open(SEQFILE, "file_with_genome.txt")||die "opening file $!";
+open(SEQFILE, "ScORFs.txt")||die "opening file $!";
 @ORFarray = <SEQFILE>; # first, we define our sequence file as an array
 close (SEQFILE);
 # this segment of code reads each line of the file, defining ORFs details, into an array
@@ -4654,6 +4654,6 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
 }
 
-push (@NEWDATA, "\n");
+
 print RESULTS @NEWDATA;
 close(RESULTS);

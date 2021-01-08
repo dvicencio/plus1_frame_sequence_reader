@@ -215,6 +215,9 @@ elsif ($newcodon eq $stopsite3) {
      
    shift @a; # after finish reading through the di-codon indicated in statement 1, the code deletes the @a array to avoid overstacking of sequences and allow the next +1 sequence with the first stop codon to take its place
  ```
+ Example of the information extracted by If statement 2 and ELsif statements 1 and 2 from the genome file: +1 sequeces with stop codons to retrieve ORF like sequences
+ 
+ ![](elsifs.gif)
  ## Big Picture
 The code starts reading through a gene with loops cycling through the sequence looking for specific di-codons. 
 

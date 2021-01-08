@@ -45,7 +45,7 @@ push (@NEWDATA, "Stop codon position and seq downstream\n");
 ```
 
 ## Loop 1
-For each gene sequence information, list their letters (nucleotides) into an array to quantify its nuclotides and their locartion in the ORF.
+For each gene sequence information, list their letters (nucleotides) into an array to quantify them and identify their locartion in the ORF.
 ```
 for($index=0; $index<@ORFarray; $index++){
 # this line defines the length of the array, or gene, in unit "nucleotide" elements 

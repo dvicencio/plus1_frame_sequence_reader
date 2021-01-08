@@ -1,52 +1,61 @@
 #!/usr/bin/perl -w
-open(SEQFILE, "ScORFs.txt")||die "opening file $!";
-@ORFarray = <SEQFILE>;
+open(SEQFILE, "file_with_genome.txt")||die "opening file $!";
+@ORFarray = <SEQFILE>; # first, we define our sequence file as an array
 close (SEQFILE);
-#this segment of code reads each line of the file, defining ORFs details, into an array
+# this segment of code reads each line of the file, defining ORFs details, into an array
 
 
 @NEWDATA=();
-open (RESULTS, ">>numstopcodonsafter+1site.txt") ||die "cannot open results.txt: $!";
+open (RESULTS, ">>file_with_results.txt") ||die "cannot open results.txt: $!";
 @NEWDATA = <RESULTS>;
+# lines 8 to 11 create a new file to deliver results
 
 
-
-
-push (@NEWDATA, "stopcodons\n");
-
+push (@NEWDATA, "frame-codon2.pl\n");
+push (@NEWDATA, "Gene name\t");
+push (@NEWDATA, "Gene length\t");
+push (@NEWDATA, "Nucleotide position\t");
+push (@NEWDATA, "Potential frameshift bi-codon\t");
+push (@NEWDATA, "Hypothetical +1 sequence\t");
+push (@NEWDATA, "Stop codon position and seq downstream\n");
+# lines 14 to 21 create labels in the new file created
 
 for($index=0; $index<@ORFarray; $index++){
-                
+# this line define the length of the array, or ORFs, in unit "nucleotide" elements                
     $gene = $ORFarray [$index];
-    #this 'for' loop takes each line of sequence details in turn out of the array ready for processing
+    # this line defines each gene (ORF) as the sequence read until a line break is found
     
     $findtext = index ($gene, ">" , 0);
-    # finds out where the letter Y is, defining the beginning of the Scer yeast name
+    # finds out where the symbol ">" is, defining the beginning of the S. cerevisiae gene name
     
     $scername= substr ($gene,$findtext,8);
-    # extracts the Scer gene name 
+    # extracts eight letters of the S. cerevisiae gene name
     
     $ATGregion = index ($gene, "???", 0);
+    # dentifies the beginning of the ORF by indicating the "???" characters situated before ATG start codons
     
     $ORFseq = substr ($gene, $ATGregion+3);
+    # extracts the ORF sequence from the start codon to the stop codon
     
     $genelen = length ($ORFseq) -2;
-    #measures length of gene sequence
+    # measures the number of nucleotides in the 
    
     print "$scername \t  $genelen \n";
     
 my $len = 3;
 
-    $gene = $ORFseq;
+    $gene = $ORFseq; # Specifies that the gene is equivalent to the ORF
 
 for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
-  
+# this line defines the length of the array beggining from "ATG" to the end of the ORF in 3 nucleotide steps
+
    $fsitectt1 = "CTTACG";
    $fsitectt2 = "CTTTCG";
    $fsitectt3 = "CTTCGG";
    $fsitectt4 = "CTTAGG";
    $fsitectt5 = "CTTCTC";
    $fsitectt6 = "CTTCAG";
+   $fsitectt7 = "CTTAGT";
    
    $fsiteggg1 = "GGGACG";
    $fsiteggg2 = "GGGTCG";
@@ -54,6 +63,7 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
    $fsiteggg4 = "GGGAGG";
    $fsiteggg5 = "GGGCTC";
    $fsiteggg6 = "GGGCAG";
+   $fsiteggg7 = "GGGAGT";
    
    $fsitegcg1 = "GCGACG";
    $fsitegcg2 = "GCGTCG";
@@ -61,6 +71,7 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
    $fsitegcg4 = "GCGAGG";
    $fsitegcg5 = "GCGCTC";
    $fsitegcg6 = "GCGCAG";
+   $fsitegcg7 = "GCGAGT";
    
    $fsiteccg1 = "CCGACG";
    $fsiteccg2 = "CCGTCG";
@@ -68,6 +79,7 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
    $fsiteccg4 = "CCGAGG";
    $fsiteccg5 = "CCGCTC";
    $fsiteccg6 = "CCGCAG";
+   $fsiteccg7 = "CCGAGT";
    
    $fsitecuc1 = "CTCACG";
    $fsitecuc2 = "CTCTCG";
@@ -75,6 +87,7 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
    $fsitecuc4 = "CTCAGG";
    $fsitecuc5 = "CTCCTC";
    $fsitecuc6 = "CTCCAG";
+   $fsitecuc7 = "CTCAGT";
    
    $fsiteagg1 = "AGGACG";
    $fsiteagg2 = "AGGTCG";
@@ -82,6 +95,7 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
    $fsiteagg4 = "AGGAGG";
    $fsiteagg5 = "AGGCTC";
    $fsiteagg6 = "AGGCAG";
+   $fsiteagg7 = "AGGAGT";
    
    
    $fsitecug1 = "CTGACG";
@@ -90,50 +104,120 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
    $fsitecug4 = "CTGAGG";
    $fsitecug5 = "CTGCTC";
    $fsitecug6 = "CTGCAG";
+   $fsitecug7 = "CTGAGT";
    
-   
-
     my $codon = substr ($ORFseq, $ORFcod - 1, $len);
+    # extracts the codons from the ORF in order until the end
     
      $sixnt = substr ($ORFseq, $ORFcod - 1, $len +3);
-    
-     $position = ($ORFcod + (length $sixnt) - 1);
-     %pos = ($sixnt => $position);
+     # extracts the codons plus the following 3 nucleotides (di-codon) for each codon from the beginning of the ORF to the end
      
+     $position = ($ORFcod + (length $sixnt) - 1);
+     # extracts the range position for each di-codon in the ORF
+     
+     %pos = ($sixnt => $position);
+     # generates key-value pairs for each di-codon => position to retrieve them when needed
       
  if ($sixnt eq $fsitectt1) {
+  # As Loop 2 reads through each codon + codon in the sequence if a di-codons is equal to $fsitectt1 (which is CTTACG in this case) the following code is applied: 
   
    $newstart = index ($gene, "???", 0);
+   # finds out the beginning of the ORF to map out the positions of each di-codon
     
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
+    # finds the di-codon and its exact position in the ORF using the key-value previously defined in Loop 2 and retrieves the +1 frame downstream sequence by skipping one nucleotide. For instance, when the program finds the di-codon CTTACG, it will retrieve the new sequence strating from CGX.
   
-  
-        $newseqlen = length($newseq);
- 
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+        # the 5 previous lines retrieve all the information related to the di-codon of interest which includes: gene name, gene length, di-codon position within ORF, and the +1-frame sequence downstream
+        
+  $newseqlen = length($newseq);
+  # defines the new frame sequence length for future reference
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
-  
+ # this line, once again, defines the length of the array; however, it starts reading from the +1 frame of the sequence downstream the di-codon starting from the fourth nucleotide from left to right. 
+   
     $stopsite1 = "TAA";
     $stopsite2 = "TAG";
     $stopsite3 = "TGA";
+    # the 3 previous lines define the stop codons as a string
     
      $newcodon = substr($newseq, $stop, $len);
+     # extracts the codons from the +1 frame sequences in order
+    
+     $newposition = ($stop + (length $newcodon));
+     #defines the position of each codon in the +1 frame sequence
+     
+    %newpos = ($newcodon => $newposition);
+    # generates key-value pairs for each codon => +1 frame position to retrieve them when needed
+ 
+    if ($newcodon eq $stopsite1 ){
     
      
- 
-    if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+     $stopsite = index ($newcodon, $stopsite1);
      
-       }
- push (@NEWDATA,"\n");
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
+  
+ 
+ 
+ 
  if ($sixnt eq $fsitectt2) {
   
    $newstart = index ($gene, "???", 0);
@@ -141,7 +225,11 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
   $newseqlen = length($newseq);
  
  
@@ -153,22 +241,71 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
  
- push (@NEWDATA,"\n")
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  if ($sixnt eq $fsitectt3) {
   
@@ -177,8 +314,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
   
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+  $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -189,22 +330,71 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  if ($sixnt eq $fsitectt4) {
@@ -214,8 +404,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+  $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -226,22 +420,71 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  if ($sixnt eq $fsitectt5) {
@@ -251,8 +494,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
   
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+  $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -263,22 +510,71 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  if ($sixnt eq $fsitectt6) {
   
@@ -287,8 +583,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+  $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -299,22 +599,162 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
+   
+   
+   
+   if ($sixnt eq $fsitectt7) {
+  
+   $newstart = index ($gene, "???", 0);
+    
+    $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
+  
+   
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+  $newseqlen = length($newseq);
+ 
+ 
+ for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
+  
+    $stopsite1 = "TAA";
+    $stopsite2 = "TAG";
+    $stopsite3 = "TGA";
+    
+     $newcodon = substr($newseq, $stop, $len);
+    
+     $newposition = ($stop + (length $newcodon));
+     
+    %newpos = ($newcodon => $newposition);
+ 
+ 
+    if ($newcodon eq $stopsite1 ){   
+    
+     
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
+ }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  if ($sixnt eq $fsiteggg1) {
   
@@ -323,8 +763,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
   
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+  $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -335,22 +779,71 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  if ($sixnt eq $fsiteggg2) {
@@ -360,8 +853,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+  $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -372,22 +869,71 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  if ($sixnt eq $fsiteggg3) {
@@ -397,8 +943,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+  $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -409,22 +959,71 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  if ($sixnt eq $fsiteggg4) {
@@ -434,8 +1033,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+  $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -446,22 +1049,71 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  if ($sixnt eq $fsiteggg5) {
@@ -471,8 +1123,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+  $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -483,22 +1139,71 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  if ($sixnt eq $fsiteggg6) {
@@ -508,8 +1213,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+  $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -520,22 +1229,161 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
+   
+   
+   if ($sixnt eq $fsiteggg7) {
+  
+   $newstart = index ($gene, "???", 0);
+    
+    $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
+  
+   
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+  $newseqlen = length($newseq);
+ 
+ 
+ for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
+  
+    $stopsite1 = "TAA";
+    $stopsite2 = "TAG";
+    $stopsite3 = "TGA";
+    
+     $newcodon = substr($newseq, $stop, $len);
+    
+     $newposition = ($stop + (length $newcodon));
+     
+    %newpos = ($newcodon => $newposition);
+ 
+ 
+    if ($newcodon eq $stopsite1 ){   
+    
+     
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
+ }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  if ($sixnt eq $fsitegcg1) {
@@ -545,8 +1393,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+  $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -557,22 +1409,71 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  if ($sixnt eq $fsitegcg2) {
@@ -582,8 +1483,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+  $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -594,22 +1499,71 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  
@@ -620,8 +1574,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+  $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -632,22 +1590,71 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  
@@ -658,8 +1665,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+  $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -670,22 +1681,71 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  
@@ -696,8 +1756,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+  $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -708,22 +1772,71 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  
@@ -734,8 +1847,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+  $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -746,23 +1863,165 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
- }
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
  
+ 
+ 
+    
+ }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
+ 
+ 
+ 
+ 
+ 
+ 
+ if ($sixnt eq $fsitegcg7) {
+  
+   $newstart = index ($gene, "???", 0);
+    
+    $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
+  
+   
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+  $newseqlen = length($newseq);
+ 
+ 
+ for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
+  
+    $stopsite1 = "TAA";
+    $stopsite2 = "TAG";
+    $stopsite3 = "TGA";
+    
+     $newcodon = substr($newseq, $stop, $len);
+    
+     $newposition = ($stop + (length $newcodon));
+     
+    %newpos = ($newcodon => $newposition);
+ 
+ 
+    if ($newcodon eq $stopsite1 ){   
+    
+     
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
+ }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  if ($sixnt eq $fsiteccg1) {
@@ -772,8 +2031,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+  $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -784,22 +2047,71 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  
@@ -810,8 +2122,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+  $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -822,22 +2138,71 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  
@@ -851,8 +2216,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+ $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -863,22 +2232,71 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  
@@ -892,8 +2310,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+  $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -904,23 +2326,71 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
- }
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
  
+ 
+ 
+    
+ }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  
@@ -931,8 +2401,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+  $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -943,22 +2417,71 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  
@@ -972,8 +2495,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+  $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -984,24 +2511,163 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
+ 
+ 
+ if ($sixnt eq $fsiteccg7) {
+  
+   $newstart = index ($gene, "???", 0);
+    
+    $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
+  
+   
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+  $newseqlen = length($newseq);
+ 
+ 
+ for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
+  
+    $stopsite1 = "TAA";
+    $stopsite2 = "TAG";
+    $stopsite3 = "TGA";
+    
+     $newcodon = substr($newseq, $stop, $len);
+    
+     $newposition = ($stop + (length $newcodon));
+     
+    %newpos = ($newcodon => $newposition);
+ 
+ 
+    if ($newcodon eq $stopsite1 ){   
+    
+     
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
+ }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  
@@ -1012,8 +2678,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+ $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -1024,22 +2694,71 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  
@@ -1051,8 +2770,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+ $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -1063,22 +2786,71 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  
@@ -1095,8 +2867,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+  $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -1107,22 +2883,71 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  
@@ -1139,8 +2964,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+ $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -1151,22 +2980,71 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  
@@ -1183,8 +3061,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
   
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+  $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -1195,22 +3077,71 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  
@@ -1227,8 +3158,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+  $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -1239,24 +3174,165 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
+ 
+ 
+ 
+ 
+ if ($sixnt eq $fsitecuc7) {
+  
+   $newstart = index ($gene, "???", 0);
+    
+    $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
+  
+   
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+  $newseqlen = length($newseq);
+ 
+ 
+ for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
+  
+    $stopsite1 = "TAA";
+    $stopsite2 = "TAG";
+    $stopsite3 = "TGA";
+    
+     $newcodon = substr($newseq, $stop, $len);
+    
+     $newposition = ($stop + (length $newcodon));
+     
+    %newpos = ($newcodon => $newposition);
+ 
+ 
+    if ($newcodon eq $stopsite1 ){   
+    
+     
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
+ }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  if ($sixnt eq $fsiteagg1) {
@@ -1266,8 +3342,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+  $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -1278,22 +3358,71 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  
@@ -1305,8 +3434,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+  $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -1317,22 +3450,71 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  
@@ -1347,8 +3529,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+  $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -1359,22 +3545,71 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  
@@ -1389,8 +3624,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+ $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -1401,22 +3640,71 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  
@@ -1431,8 +3719,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+ $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -1443,22 +3735,71 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  
@@ -1473,8 +3814,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+ $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -1485,24 +3830,162 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
+ 
+ if ($sixnt eq $fsiteagg7) {
+  
+   $newstart = index ($gene, "???", 0);
+    
+    $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
+  
+   
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+ $newseqlen = length($newseq);
+ 
+ 
+ for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
+  
+    $stopsite1 = "TAA";
+    $stopsite2 = "TAG";
+    $stopsite3 = "TGA";
+    
+     $newcodon = substr($newseq, $stop, $len);
+    
+     $newposition = ($stop + (length $newcodon));
+     
+    %newpos = ($newcodon => $newposition);
+ 
+ 
+    if ($newcodon eq $stopsite1 ){   
+    
+     
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
+ }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  
@@ -1515,8 +3998,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+ $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -1527,22 +4014,71 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  
@@ -1557,8 +4093,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+ $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -1569,22 +4109,71 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  
@@ -1597,8 +4186,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+ $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -1609,22 +4202,71 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  
@@ -1640,8 +4282,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+ $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -1652,22 +4298,71 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  
@@ -1683,8 +4378,12 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
-  
-        $newseqlen = length($newseq);
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+ $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -1695,22 +4394,71 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- push (@NEWDATA,"\n");
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
  }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
  
  
  
@@ -1726,8 +4474,13 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
   
    
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
   
-        $newseqlen = length($newseq);
+    $newseqlen = length($newseq);
  
  
  for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
@@ -1738,32 +4491,169 @@ for (my $ORFcod = 1; $ORFcod <= length $ORFseq; $ORFcod += ($len)) {
     
      $newcodon = substr($newseq, $stop, $len);
     
+     $newposition = ($stop + (length $newcodon));
      
+    %newpos = ($newcodon => $newposition);
+ 
  
     if ($newcodon eq $stopsite1 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite2 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
-     elsif ($newcodon eq $stopsite3 ){   
-        push (@NEWDATA,"$newcodon\t")
-     }
+    
      
-       }
- 
-  
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
     }
-
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
  
-}
+ 
+ 
+    
+ }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
    
-         
+  
+    
+    }
+     
+   shift @a;
+
  
+ 
+ 
+ if ($sixnt eq $fsitecug7) {
+  
+   $newstart = index ($gene, "???", 0);
+    
+    $newseq = substr ($gene, $newstart+($pos{$sixnt})-1);
+  
+   
+  push (@NEWDATA, "$scername\t");
+        push (@NEWDATA, "$genelen\t");
+        push (@NEWDATA, "($ORFcod-$position)\t");
+        push (@NEWDATA, "$sixnt\t");    
+        push (@NEWDATA, "$newseq\t");
+  
+    $newseqlen = length($newseq);
+ 
+ 
+ for ($stop =0; $stop <= $newseqlen; $stop = $stop += ($len)){
+  
+    $stopsite1 = "TAA";
+    $stopsite2 = "TAG";
+    $stopsite3 = "TGA";
+    
+     $newcodon = substr($newseq, $stop, $len);
+    
+     $newposition = ($stop + (length $newcodon));
+     
+    %newpos = ($newcodon => $newposition);
+ 
+ 
+    if ($newcodon eq $stopsite1 ){   
+    
+     
+     $stopsite = index ($newcodon, $stopsite1);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    push (@a,"$stop1\t $stopseq \n");
+    
+    
+    
+     
+       
+    }
+    
+    
+    
+     elsif ($newcodon eq $stopsite2) {
+     
+      
+      $stopsite = index ($newcodon, $stopsite2);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+    $stop1 = $newposition;
+    
+    
+    push (@a, "$stop1\t $stopseq \n");
+     
+     
+     
+    }
+    
+     
+     elsif ($newcodon eq $stopsite3) {
+      
+      
+      
+      $stopsite = index ($newcodon, $stopsite3);
+     
+    $stopseq = substr ($newseq,$stopsite,$newpos{$newcodon} );
+     $stop1 = $newposition;
+     
+   push (@a,"$stop1\t $stopseq \n");
+     
+     
+     }
+ 
+ 
+ 
+    
+ }
+
+
+    push (@NEWDATA,"Stop sequence\t", $a[0], "\n");
+   
+  
+    
+    }
+     
+   shift @a;
+
+       }
+    
 }
 
-print scalar @NEWDATA;
+push (@NEWDATA, "\n");
 print RESULTS @NEWDATA;
 close(RESULTS);
-
-

@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-open(SEQFILE, "ScORFsc.txt")||die "opening file $!";
+open(SEQFILE, "ScORFs.txt")||die "opening file $!";
 @ORFarray = <SEQFILE>;
 close (SEQFILE);
 #this segment of code reads each line of the file, defining ORFs details, into an array

@@ -5,7 +5,7 @@
 * Loop 1: places all gene sequences into a separate [array](https://www.perltutorial.org/perl-array/).
 
 * Loop 2: inside loop 1, lists all nucleotides of the gene in groups of three (also known as codons). This way the loop is also commanded to read the sequence in `codon + codon` steps just as a ribosome would move through an mRNA. 
-   * If statement 1: inside loop2, to search for sequences with the `6` nucleotides (di-codon) of interest (this could be modified to more or less nucleotides depending of the length of sequence searched) and to retrieve the +1-frame sequence downstream of the di-codon.
+   * If statement 1: inside loop2, to search for sequences with the `6` nucleotides (di-codon) of interest (this could be modified for more or less nucleotides depending of the length and specifications of sequence of interest) and to retrieve the +1-frame sequence downstream of the di-codon.
    
 * Loop 3: inside loop 2 and "if statement 1", keeps reading through the gene squence, although in the +1-frame now, listing the nucleotides in codon groups once again. 
    * If satement 2: inside Loop 3, to search for the stop codon `TAA` and , if this is the first stop codon identified downstream the +1 frame after the di-codon, pushes the sequence in between to a new file. 

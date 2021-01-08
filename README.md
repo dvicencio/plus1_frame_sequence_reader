@@ -239,7 +239,7 @@ Genome files are usually represented in [FASTA format](https://en.wikipedia.org/
 note: some symbols are found in between the gene information which where edited indicidually, approx 7
 # Additional Notes
 The program was sligthly edited for different circumstances were other informations was required like:
-* Total number of stop codons when a nucleotide is ignored at the beginning of each gene
+* Total number of stop codons in a +1 (achieved by skipping a nucleotide at the beginning of each gene)
 * Total number of codons, di-codons, and ORFs
 * Concatenation of all +1 sequences
 All codes retrieve the information into a new "Results file"

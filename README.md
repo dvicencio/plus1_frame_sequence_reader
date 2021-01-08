@@ -237,3 +237,9 @@ Genome files are usually represented in [FASTA format](https://en.wikipedia.org/
 * Add the characters "???" before every start codon
 * Add a line break before every ">" symbol to separate each gene
 note: some symbols are found in between the gene information which where edited indicidually, approx 7
+# Additional Notes
+The program was sligthly edited for different circumstances were other informations was required like:
+* Total number of stop codons when a nucleotide is ignored at the beginning of each gene
+* Total number of codons, di-codons, and ORFs
+*
+* 

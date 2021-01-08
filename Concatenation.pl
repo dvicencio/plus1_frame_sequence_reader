@@ -6,7 +6,7 @@ close (SEQFILE);
 
 
 @NEWDATA=();
-open (RESULTS, ">>concat+1seq.txt") ||die "cannot open results.txt: $!";
+open (RESULTS, ">>results_file.txt") ||die "cannot open results.txt: $!";
 @NEWDATA = <RESULTS>;
 
 

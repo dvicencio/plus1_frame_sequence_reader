@@ -6,7 +6,7 @@ close (SEQFILE);
 
 
 @NEWDATA=();
-open (RESULTS, ">>practice1.txt") ||die "cannot open results.txt: $!";
+open (RESULTS, ">>results_file.txt") ||die "cannot open results.txt: $!";
 @NEWDATA = <RESULTS>;
 
 

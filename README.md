@@ -243,5 +243,6 @@ The program was sligthly edited for different circumstances were other informati
 * Total number of stop codons in a +1 (achieved by skipping a nucleotide at the beginning of each gene)
 * Total number of codons, di-codons, and ORFs
 * Concatenation of all +1 sequences
+
 All codes retrieve the information into a new "Results file"
 

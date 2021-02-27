@@ -229,7 +229,7 @@ When the code has ran through the first gene and the first di-codon, if there is
 
 On the other hand, if there are no more di-codons of interest in the gene, the program jumps to the next ORF.
 
-This method is applied to each gene in the Saccharomyces cerevisiae's genome file until the last gene in the file has been read by the program.
+This method is applied to each gene in the Saccharomyces cerevisiae's genome file until the last gene in the file has been read by the program. (For a broad and further understanding of the program please read the [research paper](https://github.com/dvicencio/plus1_frame_sequence_reader/blob/main/Dissertation%20final.docx))
 
 # Genome File Specifications and Edition
 Genome files are usually represented in [FASTA format](https://en.wikipedia.org/wiki/FASTA_format). However, slight changes to the file have to be done in order to run the code as intended. Such changes are (the following changes could be done using a text editor or the command line):
